@@ -17,3 +17,9 @@ Ein Tutorial, in dem man einen einfachen Reddit bot bauen kann. Ich glaube der B
 Wie wäre ein twitter bot der einem User, einmal im Monat oder Woche seine Stats angibt?
 
 Also kp so was wie durchschnittliche Retweets, Kommentare usw 
+
+## Twitter anlaysing App:
+
+Bestimmte Verhaltensweisen auf Twitter analysieren und dann Statistiken führen.
+
+-[http://pythonforengineers.com/build-a-twitter-analytics-app-using-python/](Analysing twitter)

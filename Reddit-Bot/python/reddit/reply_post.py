@@ -11,45 +11,56 @@ __author__      = "Asdf"
 __copyright__   = "Copyright 2017, Planet Earth"
 
 
-# Create the Reddit instance
-reddit = praw.Reddit('bot1')
+class Reply:
 
-if not os.path.isfile("posts_replied_to.txt"):
-    posts_replied_to = []
-else:
-    with open("posts_replied_to.txt", "r") as f:
-       posts_replied_to = f.read()
-       posts_replied_to = posts_replied_to.split("\n")
-       posts_replied_to = list(filter(None, posts_replied_to))
+    def reply(self, bot_name, subreddit_name, number_of_submissions):
 
-with open("posts_replied_to.txt", "r") as f:
-    posts_replied_to = f.read()
-    posts_replied_to = posts_replied_to.split("\n")
-    posts_replied_to = list(filter(None, posts_replied_to))
+        reddit = praw.Reddit(bot_name)
+        subreddit = reddit.subreddit(subreddit_name)
 
+        # check already replied posts
+        posts_replied_to = Reply().read_post()
 
-limit = 1
+        limit = 1
 
-subreddit = reddit.subreddit('pythonforengineers')
+        for submission in subreddit.hot(limit=number_of_submissions):
+            print(submission.title)
 
+            # if limit:
+            #     if submission.title == "fake news":
+            #         submission.reply("here I am")
+            #     limit = 0
 
-for submission in subreddit.hot(limit=10):
-    print(submission.title)
+            if submission.id not in posts_replied_to:
+                print("here first")
+                if re.search("Test Bot Scheduler", submission.title, re.IGNORECASE):
+                    print("here second")
+                    submission.reply("Me too!!")
 
-    if limit:
-        if submission.title == "fake news":
-            submission.reply("here I am")
-        limit = 0
+        print("Bot replying to : ", submission.title)
 
-    if submission.id not in posts_replied_to:
-        if re.search("i love python", submission.title, re.IGNORECASE):
-            submission.reply("Botty bot says: Me too!!")
+        # write to file which post was replied to
+        Reply().write_post(posts_replied_to, submission)
 
 
+        posts_replied_to.append(submission.id)
+        with open("posts_replied_to.txt", "w") as f:
+            for post_id in posts_replied_to:
+                f.write(post_id + "\n")
 
-print("Bot replying to : ", submission.title)
-posts_replied_to.append(submission.id)
+    def read_post(self):
+        if not os.path.isfile("posts_replied_to.txt"):
+            posts_replied_to = []
+        else:
+            with open("posts_replied_to.txt", "r") as f:
+               posts_replied_to = f.read()
+               posts_replied_to = posts_replied_to.split("\n")
+               posts_replied_to = list(filter(None, posts_replied_to))
 
-with open("posts_replied_to.txt", "w") as f:
-    for post_id in posts_replied_to:
-        f.write(post_id + "\n")
+        return posts_replied_to
+
+    def write_post(self, posts_replied_to, submission):
+        posts_replied_to.append(submission.id)
+        with open("posts_replied_to.txt", "w") as f:
+            for post_id in posts_replied_to:
+                f.write(post_id + "\n")
